@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>workspace-trail0738</title>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="../css/default.css" rel="stylesheet"/>
+<script src="../js/jquery-3.1.1.min.js"></script>
+
+<style>
+.drop_area{
+  position: relative;
+  width: 60%;
+  margin: 0 auto;
+  height: 300px;
+  border: 4px dotted #0C6;
+  background-color: #EFFFEF;
+}
+.drop_text{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 305px;
+  font-size: 16px;
+  color: #040;
+}
+.file_status_area{
+  display: flex;
+}
+.file_area{
+  flex: 0 0;
+  width: 250px;
+  border: 1px solid;
+}
+</style>
+
+</head>
+<body>
+  <!-- ドラッグ＆ドロップを行うための研究まとめ -->
+  <div class="content_area">
+    <div class="content_title">
+      <i class="fa fa-square"></i>
+      ドラッグ＆ドロップ(JQueryで)
+    </div>
+    <div class="content_body">
+      <div class="drop_area">
+        <div class="drop_text">ここにファイルをドロップしてください。</div>
+      </div>
+    </div>
+    <input type="file" name="selectFiles" multiple style="display: none;" />
+    <div class="file_status_area">
+      <div class="file_format file_area" style="display: none;">
+        <div class="file_title"></div>
+        <div class="file_size"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+$(function(){
+/* ---------------------------------------------------------
+ * ドラッグ＆ドロップのロジック
+ *　　JQueryでは、ドロップイベントを受け取るメソッド？が用意されてない。
+ *　　よって、nativeのjavascriptを使ってその部分を保管する必要がある。
+ * --------------------------------------------------------- */
+  const dropArea = $(".drop_area");
+  const kb = 1024;
+  dropArea
+    .bind("dragenter", function(e){ e.preventDefault(); return false; })
+    .bind("dragover", function(e){ e.preventDefault(); return false; })
+    .bind("drop", function(e){
+      
+      // ブラウザの挙動を止める
+      e.stopPropagation();
+      e.preventDefault();
+
+      // nativeのイベントが取れていなければreturn
+      if( !e.originalEvent ){
+        return;
+      }
+
+      // ファイルの取得
+      const files = e.originalEvent.dataTransfer.files;
+
+      // ファイル情報の取得・表示
+      const fileStatusArea = $(".file_status_area");
+      var formData = new FormData();
+      for(var i=0; i< files.length; i++){
+        var file = files[i];
+
+        // ファイルの取得
+        formData.append("file", file); 
+
+        // ファイルの表示
+        var fileStatus = $(".file_format").clone(false);
+        fileStatus.removeClass("file_format");
+
+        // 値の挿入
+        fileStatus.find(".file_title").text(file.name);
+        var fileSize = Math.floor( (file.size / kb) );
+        fileStatus.find(".file_size").text(fileSize + "KB");
+
+        fileStatusArea.append(fileStatus);
+      }
+      fileStatusArea.children().not(".file_format").show();
+    });
+
+  // ドロップエリア以外にファイルを落として画面遷移してしまわないように挙動を止める
+  $(document).on("dragenter dragover drop", function(){
+    e.stopPropagation();
+    e.preventDefault();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+html{
+    font-family: "Meiryo UI", sans-serif;
+    font-size: 13px;
+}
+
+body{
+    width: 100%;
+    min-width: 1040px;
+    margin: 0;
+}
+
+/* ----------------------------------------
+ * 内容部分の大枠
+ * ---------------------------------------- */
+.content_area{
+    width: 1000px;
+    margin: 30px auto 0;
+    padding: 20px;
+}
+
+.content_title{
+    border-bottom: 1px solid #000;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.content_body{
+    padding: 20px;
+}
