@@ -107,7 +107,7 @@ $(function(){
     });
 
   // ドロップエリア以外にファイルを落として画面遷移してしまわないように挙動を止める
-  $(document).on("dragenter dragover drop", function(){
+  $(document).on("dragenter dragover drop", function(e){
     e.stopPropagation();
     e.preventDefault();
   });
