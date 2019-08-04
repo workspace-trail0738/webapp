@@ -27,11 +27,11 @@
 }
 .file_status_area{
   display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
 }
 .file_area{
-  flex: 0 0;
-  width: 250px;
-  border: 1px solid;
+  flex: 0 0 25%;
 }
 </style>
 
@@ -48,13 +48,18 @@
         <div class="drop_text">ここにファイルをドロップしてください。</div>
       </div>
     </div>
-    <input type="file" name="selectFiles" multiple style="display: none;" />
+    <form id="formDD" action="#" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="hidden" value="1" />
+      <input type="file" name="selectFiles" multiple style="display: none;" />
+      <button type="button" style="display:none;">送信</button>
+    </form>
     <div class="file_status_area">
       <div class="file_format file_area" style="display: none;">
-        <div class="file_title"></div>
-        <div class="file_size"></div>
+        <span class="file_title"></span>
+        <span class="file_size"></span>
       </div>
     </div>
+    <button type="button" class="formdata_detail">格納データを表示</button>
   </div>
 
 <script>
@@ -62,11 +67,12 @@ $(function(){
 /* ---------------------------------------------------------
  * ドラッグ＆ドロップのロジック
  *　　JQueryでは、ドロップイベントを受け取るメソッド？が用意されてない。
- *　　よって、nativeのjavascriptを使ってその部分を保管する必要がある。
+ *　　よって、nativeのjavascriptを使ってその部分を補完する必要がある。
  * --------------------------------------------------------- */
   const dropArea = $(".drop_area");
   const kb = 1024;
   dropArea
+    //　他ドラッグイベントを止める
     .bind("dragenter", function(e){ e.preventDefault(); return false; })
     .bind("dragover", function(e){ e.preventDefault(); return false; })
     .bind("drop", function(e){
@@ -85,12 +91,10 @@ $(function(){
 
       // ファイル情報の取得・表示
       const fileStatusArea = $(".file_status_area");
-      var formData = new FormData();
-      for(var i=0; i< files.length; i++){
-        var file = files[i];
-
-        // ファイルの取得
-        formData.append("file", file); 
+      var formData = new FormData(document.getElementById("formDD"));
+      for( file of files ){
+        // ファイルをformDataにセット
+        formData.append("selectFiles", file); 
 
         // ファイルの表示
         var fileStatus = $(".file_format").clone(false);
@@ -103,6 +107,7 @@ $(function(){
 
         fileStatusArea.append(fileStatus);
       }
+      //　ファイルデータの表示
       fileStatusArea.children().not(".file_format").show();
     });
 
@@ -110,6 +115,15 @@ $(function(){
   $(document).on("dragenter dragover drop", function(e){
     e.stopPropagation();
     e.preventDefault();
+  });
+
+  //　formdata内の情報を出力する
+  $("button.formdata_detail").click(function(){
+    var formData = new FormData(document.getElementById("formDD"));
+    for( item of formData ){
+      var alertText = alertText + item + "\n";
+    }
+    alert(alertText);
   });
 });
 </script>
